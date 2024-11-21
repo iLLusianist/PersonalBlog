@@ -1,0 +1,89 @@
+.title {
+    color: inherit;
+    border-radius: inherit;
+    font-size: 50px;
+    padding-bottom: 25px;
+}
+.title span {
+    background-color: #1F2833;
+    border-radius: inherit;
+    color: inherit;
+    padding: 0 20px 10px 20px;
+}
+
+
+.title_buttons {
+    background-color: #1F2833;
+    border-radius: inherit;
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 16px;
+    padding: 5px 0;
+}
+.first_title_button {
+    margin-left: 10px;
+}
+.last_title_button {
+    margin-left: auto;
+    color: #2ac721;
+}
+.admin_buttons {
+    display: block;
+    color: orangered;
+}
+.logout_button {
+    margin-left: auto;
+    display: none;
+    color: #c72121;
+}
+
+
+.sign_in_div {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    background-color: #1F2833;
+    border-radius: inherit;
+    padding-top: 40px;
+    padding-bottom: 60px;
+}
+.sign_in_label {
+    display: grid;
+    justify-content: center;
+    align-content: center;
+    font-size: 24px;
+    padding-top: 20px;
+    padding-bottom: 5px;
+}
+.sign_in_input {
+    width: 350px;
+    font-size: inherit;
+    border: 2px solid #4682B4;
+    border-radius: 24px;
+    outline: none;
+    font-family: inherit;
+    text-align: center;
+}
+.sign_in_button {
+    color: #2ac721;
+    margin-top: 40px;
+    background: #141a21;
+    border-radius: 24px;
+    font-family: inherit;
+    margin-left: 10px;
+}
+.sign_in_text {
+    padding-top: 15px;
+    text-align: center;
+}
+.sign_up_text {
+    cursor: pointer;
+    color: steelblue;
+}
+
+.blogs{
+    border-radius: inherit;
+    box-sizing: border-box;
+    background-color: #1F2833;
+    padding-left: -30px;
+}

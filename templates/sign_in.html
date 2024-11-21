@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Sign in</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/custom.css">
+</head>
+
+<body>
+    <!-- Title TEXT -->
+    <div class="title">
+        <span>Personal blog Кабанчика</span>
+    </div>
+
+    <!-- Title BUTTONS -->
+    <div class="title_buttons">
+        <!-- Button BLOGS -->
+        <button class="first_title_button" onclick="open_index()">Blogs</button>
+
+        <!-- Button SIGN IN -->
+        <button class="last_title_button" id="sign_in_button" onclick="open_sign_in()">Sign in</button>
+    </div>
+
+    <form method="POST" action="/authorization">
+        <div class="sign_in_div">
+            <!-- Input LOGIN -->
+            <label class="sign_in_label" for="sign_in_login">Login</label>
+            <input class="sign_in_input" type="text" name="sign_in_login" id="sign_in_login" placeholder="Enter login">
+
+            <!-- Input PASSWORD -->
+            <label class="sign_in_label" for="sign_in_password">Password</label>
+            <input class="sign_in_input" type="password" name="sign_in_password" id="sign_in_password" placeholder="Enter password">
+
+            <!-- Button SIGN IN -->
+            <button class="sign_in_button" type=submit>Sign in</button>
+
+            <!-- Text SIGN UP-->
+            <div class="sign_in_text">Don't have account? <a href="/open_sign_up">Sign Up</a></div>
+        </div>
+    </form>
+
+<script src="../static/login.js"></script>
+</body>
+</html>

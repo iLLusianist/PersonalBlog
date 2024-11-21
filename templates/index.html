@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Personal blog</title>
+    <link rel="stylesheet" href="../static/index.css">
+    <link rel="stylesheet" href="../static/custom.css">
+</head>
+<body>
+    <!-- Title TEXT -->
+    <div class="title">
+        <span>Personal blog Кабанчика</span>
+    </div>
+
+    <!-- Title BUTTONS -->
+    <div class="title_buttons">
+        <!-- Button BLOGS -->
+        <button class="first_title_button" onclick="open_index()">Blogs</button>
+
+        <!-- Button ADD -->
+        <button class="admin_buttons" id="add_button">Add</button>
+
+        <!-- Button EDIT -->
+        <button class="admin_buttons" id="edit_button">Edit</button>
+
+        <!-- Button SIGN IN -->
+        <button class="last_title_button" onclick="open_sign_in()" id="sign_in_button">Sign in</button>
+
+        <!-- Button LOGOUT-->
+        <button class="logout_button" id="logout_button" onclick="logout()">Logout</button>
+
+
+    </div>
+
+
+
+    <div class="blogs">
+        <ul>
+            <li>
+                <h3>First blog title</h3>
+                <p>First blog text</p>
+            </li>
+            <li>
+                <h3>Second blog title</h3>
+                <p>Second blog text</p>
+            </li>
+            <li>
+                <h3>Third blog title</h3>
+                <p>Third blog text</p>
+            </li>
+        </ul>
+    </div>
+<script src="../static/login.js"></script>
+</body>
+</html>
