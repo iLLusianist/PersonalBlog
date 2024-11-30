@@ -3,44 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign up</title>
-    <link rel="stylesheet" href="../static/index.css">
     <link rel="stylesheet" href="../static/custom.css">
 </head>
 <body>
-
-    <!-- Title TEXT -->
-    <div class="title">
+    <!-- Title BLOG NAME -->
+    <div class="block main_title_text">
         <span>Personal blog Кабанчика</span>
     </div>
 
-    <!-- Title BUTTONS -->
-    <div class="title_buttons">
-        <!-- Button BLOGS -->
-        <button class="first_title_button" onclick="open_index()">Blogs</button>
 
-        <!-- Button SIGN IN -->
-        <button class="last_title_button" id="sign_in_button" onclick="open_sign_in()">Sign in</button>
+    <!-- Title BUTTONS -->
+    <div class="block">
+        <!-- Button BLOGS -->
+        <form method="POST" action="/">
+            <button class="blog_button_move">Blogs</button>
+        </form>
+
+        <div class="right_buttons">
+            <!-- Button SIGN IN -->
+            <form method="POST" action="/open_sign_in">
+                <button class="sign_in_button">Sign in</button>
+            </form>
+        </div>
     </div>
 
+
     <form method="POST" action="/registration">
-        <div class="sign_in_div">
+        <div class="block align_to_center">
             <!-- Input LOGIN -->
-            <label class="sign_in_label" for="sign_up_login">Login</label>
-            <input class="sign_in_input" type="text" name="sign_up_login" id="sign_up_login" placeholder="Enter login">
+            <label class="align_to_center login_input_margin login_label" for="sign_up_login">Login</label>
+            <input class="login_input" type="text" name="sign_up_login" id="sign_up_login" placeholder="Enter login">
 
             <!-- Input PASSWORD -->
-            <label class="sign_in_label" for="sign_up_password">Password</label>
-            <input class="sign_in_input" type="password" name="sign_up_password" id="sign_up_password" placeholder="Enter password">
+            <label class="align_to_center login_input_margin login_label" for="sign_up_password">Password</label>
+            <input class="login_input " type="password" name="sign_up_password" id="sign_up_password" placeholder="Enter password">
 
             <!-- Input REPEAT PASSWORD -->
-            <label class="sign_in_label" for="sign_up_repeat_password">Repeat password</label>
-            <input class="sign_in_input" type="password" name="sign_up_repeat_password" id="sign_up_repeat_password" placeholder="Repeat password">
+            <label class="align_to_center login_input_margin login_label" for="sign_up_repeat_password">Repeat password</label>
+            <input class="login_input " type="password" name="sign_up_repeat_password" id="sign_up_repeat_password" placeholder="Repeat password">
 
             <!-- Button SIGN UP -->
-            <button class="sign_in_button" type="submit">Sign up</button>
+            <div class="align_to_center">
+                <button type=submit class="login_input_margin sign_in_button login_sign_in_button">Sign up</button>
+            </div>
         </div>
     </form>
-
-<script src="../static/login.js"></script>
 </body>
 </html>

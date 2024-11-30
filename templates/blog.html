@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Personal blog</title>
+    <title>Blog</title>
     <link rel="stylesheet" href="../static/custom.css">
 </head>
 <body>
@@ -22,7 +22,7 @@
         {% if logged_in %}
             <!-- Button ADD -->
             <form method="POST" action="/open_add">
-                <button>Add</button>
+                <button class="">Add</button>
             </form>
         {% endif %}
 
@@ -32,6 +32,7 @@
                 <form method="POST" action="/logout">
                     <button class="logout_button">Logout</button>
                 </form>
+
             {% else %}
                 <!-- Button SIGN IN -->
                 <form method="POST" action="/open_sign_in">
@@ -42,16 +43,25 @@
     </div>
 
 
+    <div class="block align_to_vertical_center">
+        <!-- Text TITLE -->
+        <div class="font_size blog_button_move">
+            {{ title }}
+        </div>
+
+        <!-- Button EDIT -->
+        <form class="right_buttons" method="POST" action="/open_edit?title={{ title }}&text={{ text }}">
+            {% if logged_in %}
+                <button class=" sign_in_button">Edit</button>
+            {% endif %}
+        </form>
+    </div>
+
+
     <div class="block">
-        <ul>
-            {% for blog in blogs_list %}
-                {% set title, text = blog %}
-                <li>
-                    <h3><a class="blog_href" href="/open_blog?title={{ title }}&text={{ text }}">{{ title }}</a></h3>
-                    <p>{{ text[:40] }}{% if text|length > 40 %}...{% endif %}</p>
-                </li>
-            {% endfor %}
-        </ul>
+        <div class="block_padding text">
+            {{ text }}
+        </div>
     </div>
 </body>
 </html>

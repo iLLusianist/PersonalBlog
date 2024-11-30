@@ -3,43 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <title>Sign in</title>
-    <link rel="stylesheet" href="../static/index.css">
     <link rel="stylesheet" href="../static/custom.css">
 </head>
-
 <body>
-    <!-- Title TEXT -->
-    <div class="title">
+    <!-- Title BLOG NAME -->
+    <div class="block main_title_text">
         <span>Personal blog Кабанчика</span>
     </div>
 
-    <!-- Title BUTTONS -->
-    <div class="title_buttons">
-        <!-- Button BLOGS -->
-        <button class="first_title_button" onclick="open_index()">Blogs</button>
 
-        <!-- Button SIGN IN -->
-        <button class="last_title_button" id="sign_in_button" onclick="open_sign_in()">Sign in</button>
+    <!-- Title BUTTONS -->
+    <div class="block">
+        <!-- Button BLOGS -->
+        <form method="POST" action="/">
+            <button class="blog_button_move">Blogs</button>
+        </form>
+
+        <div class="right_buttons">
+            <!-- Button SIGN IN -->
+            <form method="POST" action="/open_sign_in">
+                <button class="sign_in_button">Sign in</button>
+            </form>
+        </div>
     </div>
 
+
     <form method="POST" action="/authorization">
-        <div class="sign_in_div">
+        <div class="block align_to_center">
             <!-- Input LOGIN -->
-            <label class="sign_in_label" for="sign_in_login">Login</label>
-            <input class="sign_in_input" type="text" name="sign_in_login" id="sign_in_login" placeholder="Enter login">
+            <label class="align_to_center login_input_margin login_label" for="sign_in_login">Login</label>
+            <input class="login_input" type="text" name="sign_in_login" id="sign_in_login" placeholder="Enter login">
 
             <!-- Input PASSWORD -->
-            <label class="sign_in_label" for="sign_in_password">Password</label>
-            <input class="sign_in_input" type="password" name="sign_in_password" id="sign_in_password" placeholder="Enter password">
+            <label class="align_to_center login_input_margin login_label" for="sign_in_password">Password</label>
+            <input class="login_input " type="password" name="sign_in_password" id="sign_in_password" placeholder="Enter password">
 
             <!-- Button SIGN IN -->
-            <button class="sign_in_button" type=submit>Sign in</button>
+            <div class="align_to_center">
+                <button type=submit class="login_input_margin sign_in_button login_sign_in_button">Sign in</button>
+            </div>
 
             <!-- Text SIGN UP-->
-            <div class="sign_in_text">Don't have account? <a href="/open_sign_up">Sign Up</a></div>
+            <div class="align_to_center">
+                <div class=" login_href ">Don't have account? <a href="/open_sign_up" class="blog_href">Sign Up</a></div>
+            </div>
         </div>
     </form>
-
-<script src="../static/login.js"></script>
 </body>
 </html>

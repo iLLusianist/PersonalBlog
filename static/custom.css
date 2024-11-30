@@ -1,89 +1,135 @@
-.title {
-    color: inherit;
-    border-radius: inherit;
-    font-size: 50px;
-    padding-bottom: 25px;
+body {
+    background-color: #0B0C10;
+    font-family: 'comic sans ms', sans-serif;
+    color: #66FCF1;
+    padding: 10px;
 }
-.title span {
-    background-color: #1F2833;
-    border-radius: inherit;
-    color: inherit;
-    padding: 0 20px 10px 20px;
+button {
+    background: none;
+    border: none;
+    color: #66FCF1;
+    font-size: 24px;
+    cursor: pointer;
+    padding: 5px 15px 10px 15px;
+    font-family: inherit;
+    margin-top: 5px;
+    border-radius: 24px;
+}
+button:hover {
+    background: #141a21;
+}
+ul {
+    list-style-type: none;
+    margin-left: -30px;
+}
+h3 {
+    margin: 0;
+}
+p {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+form {
+    margin-block-end: 0;
 }
 
-
-.title_buttons {
-    background-color: #1F2833;
-    border-radius: inherit;
+.block {
     display: flex;
-    justify-content: space-between;
-    margin-bottom: 16px;
-    padding: 5px 0;
+    background-color: #1F2833;
+    border-radius: 24px;
+    padding: 5px 15px 10px 15px;
+    margin-bottom: 15px;
 }
-.first_title_button {
-    margin-left: 10px;
+.align_to_center {
+    display: grid;
+    justify-content: center;
 }
-.last_title_button {
+.align_to_vertical_center {
+    align-items: center;
+}
+.font_size {
+    font-size: 24px;
+}
+
+
+.main_title_text {
+    font-size: 48px;
+    padding-left: 25px;
+    width: 550px;
+}
+.blog_button_move {
+     padding-left: 10px
+}
+.block_padding {
+    padding: 10px;
+}
+
+.right_buttons {
+    display: flex;
     margin-left: auto;
+}
+.sign_in_button {
     color: #2ac721;
 }
-.admin_buttons {
-    display: block;
-    color: orangered;
-}
 .logout_button {
-    margin-left: auto;
-    display: none;
     color: #c72121;
 }
 
 
-.sign_in_div {
-    display: grid;
-    justify-content: center;
-    align-content: center;
-    background-color: #1F2833;
-    border-radius: inherit;
-    padding-top: 40px;
-    padding-bottom: 60px;
+.blog_href {
+    color: inherit;
+    line-height: 30px;
+    text-decoration: none;
 }
-.sign_in_label {
-    display: grid;
-    justify-content: center;
-    align-content: center;
-    font-size: 24px;
-    padding-top: 20px;
-    padding-bottom: 5px;
+.blog_href:visited,
+.blog_href:link {
+    color:inherit;
 }
-.sign_in_input {
-    width: 350px;
-    font-size: inherit;
-    border: 2px solid #4682B4;
+.blog_href:hover {
+    text-decoration: underline;
+}
+
+
+.login_input {
     border-radius: 24px;
+    font-size: 18px;
+    width: 350px;
+    border: 2px solid #4682B4;
     outline: none;
     font-family: inherit;
     text-align: center;
 }
-.sign_in_button {
-    color: #2ac721;
-    margin-top: 40px;
-    background: #141a21;
-    border-radius: 24px;
-    font-family: inherit;
-    margin-left: 10px;
+.login_input_margin {
+    margin-top: 20px;
 }
-.sign_in_text {
-    padding-top: 15px;
-    text-align: center;
+.login_label {
+    font-size: 18px;
+    margin-bottom: 5px;
 }
-.sign_up_text {
-    cursor: pointer;
-    color: steelblue;
+.login_href {
+    margin-bottom: 10px;
+}
+.login_sign_in_button {
+    max-width: 120px;
+    margin-bottom: 10px
 }
 
-.blogs{
+
+.textarea {
+    width: 100%;
+    height: 550px;
     border-radius: inherit;
-    box-sizing: border-box;
-    background-color: #1F2833;
-    padding-left: -30px;
+    font-size: 16px;
+    margin: 15px 5px 10px 5px;
+    padding: 10px 15px;
+    resize: none;
+    outline: none;
+}
+.blog_input {
+    margin-left: 10px;
+}
+.text{
+    flex-wrap: wrap;
+    overflow-wrap: break-word;
+    word-break: break-all;
 }

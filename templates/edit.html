@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Edit blog</title>
+    <link rel="stylesheet" href="../static/custom.css">
+</head>
+<body>
+    <!-- Title TEXT -->
+    <div class="block main_title_text">
+        <span>Personal blog Кабанчика</span>
+    </div>
+
+
+    <!-- Title BUTTONS -->
+    <div class="block">
+        <!-- Button BLOGS -->
+        <form method="POST" action="/">
+            <button class="blog_button_move">Blogs</button>
+        </form>
+
+        <!-- Button ADD -->
+        <form method="POST" action="/open_add">
+            <button>Add</button>
+        </form>
+
+        <!-- Button Logout -->
+        <div class="right_buttons">
+            <form method="POST" action="/logout">
+                <button class="logout_button">Logout</button>
+            </form>
+        </div>
+    </div>
+
+
+    <form method="POST" action="/edit_blog?title={{ title }}">
+        <div class="block align_to_vertical_center">
+            <div class="">
+                <!-- BLOG TITLE -->
+                <label class="font_size blog_button_move" for="edit_title">Edit blog title</label>
+                <input class="login_input blog_input" type="text" id="edit_title" name="edit_title" value="{{ title }}">
+            </div>
+
+            <!-- SUBMIT BUTTON -->
+            <div class="right_buttons">
+                <button class="sign_in_button">Submit</button>
+            </div>
+        </div>
+
+
+        <div class="block">
+            <textarea class="textarea" name="edit_text">{{ text }}</textarea>
+        </div>
+    </form>
+</body>
+</html>
