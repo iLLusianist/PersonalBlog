@@ -3,7 +3,6 @@ import db
 
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
-from db import blogs_table, test_blogs_table
 from flask_session import Session
 
 
@@ -13,7 +12,7 @@ app.secret_key = 'abc'
 app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
-DATABASE_NAME = 'login_password.db'
+DATABASE_NAME = 'Personal_Blog.db'
 USERS_TABLE  = 'users'
 TEST_USERS_TABLE = 'test_users'
 BLOGS_TABLE = 'blogs'
@@ -213,7 +212,7 @@ def edit_blog():
         previous_title = request.args.get('title')
 
         # Выбор нужной таблицы (тестовой или обычной)
-        table = get_table(DATABASE_NAME, blogs_table, test_blogs_table, request.form.get('is_test'))
+        table = get_table(DATABASE_NAME, BLOGS_TABLE, TEST_BLOGS_TABLE, request.form.get('is_test'))
 
         # Если заголовок изменен
         if previous_title != new_title:
@@ -354,6 +353,6 @@ def check_status(login):
 
 # Start APP
 if __name__ == '__main__':
-    db.run(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE)
+    db.run(DATABASE_NAME)
     app.run(debug=True)
 

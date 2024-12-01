@@ -1,16 +1,16 @@
 import sqlite3
 import os
+
 from sqlite3 import connect
+from app import USERS_TABLE, TEST_USERS_TABLE, BLOGS_TABLE, TEST_BLOGS_TABLE
 
-password_table  = 'users'
-test_password_table = 'test_users'
-blogs_table = 'blogs'
-test_blogs_table = 'test_blogs'
 
-def run(database, _password_table, _test_password_table):
+def run(database):
     check_database(database)
-    check_table(database, _password_table)
-    check_table(database, test_password_table)
+    check_table(database, USERS_TABLE)
+    check_table(database, TEST_USERS_TABLE)
+    check_table(database, BLOGS_TABLE)
+    check_table(database, TEST_BLOGS_TABLE)
 
 def check_database(database):
     try:
@@ -44,7 +44,7 @@ def check_table(database, table):
 
 def make_sql_create(table):
     sql_create = ''
-    if table == password_table or table == test_password_table:
+    if table == USERS_TABLE or table == TEST_USERS_TABLE:
         sql_create = f"""
                 CREATE TABLE IF NOT EXISTS {table} (
                     login TEXT PRIMARY KEY,
@@ -52,7 +52,7 @@ def make_sql_create(table):
                     status TEXT
                 );
                 """
-    elif table == blogs_table or table == test_blogs_table:
+    elif table == BLOGS_TABLE or table == TEST_BLOGS_TABLE:
         sql_create = f"""
                 CREATE TABLE IF NOT EXISTS {table} (
                     title TEXT PRIMARY KEY,
