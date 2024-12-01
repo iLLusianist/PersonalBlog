@@ -2,8 +2,8 @@ import sqlite3
 import os
 from sqlite3 import connect
 
-password_table  = 'passwords'
-test_password_table = 'test_passwords'
+password_table  = 'users'
+test_password_table = 'test_users'
 blogs_table = 'blogs'
 test_blogs_table = 'test_blogs'
 
@@ -48,14 +48,17 @@ def make_sql_create(table):
         sql_create = f"""
                 CREATE TABLE IF NOT EXISTS {table} (
                     login TEXT PRIMARY KEY,
-                    password INTEGER NOT NULL
+                    password INTEGER NOT NULL,
+                    status TEXT
                 );
                 """
     elif table == blogs_table or table == test_blogs_table:
         sql_create = f"""
                 CREATE TABLE IF NOT EXISTS {table} (
                     title TEXT PRIMARY KEY,
-                    text TEXT
+                    text TEXT,
+                    created_at TEXT,
+                    updated_at TEXT
                 );
                 """
     print(f'Table "{table}" created')

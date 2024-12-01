@@ -19,26 +19,23 @@
             <button class="blog_button_move">Blogs</button>
         </form>
 
-        {% if logged_in %}
+        {% if is_admin %}
             <!-- Button ADD -->
             <form method="POST" action="/open_add">
-                <button class="">Add</button>
+                <button>Add</button>
+            </form>
+
+            <!-- Button Admin -->
+            <form method="POST" action="/open_admin">
+                <button>Admin</button>
             </form>
         {% endif %}
 
         <div class="right_buttons">
-            {% if logged_in %}
-                <!-- Button LOGOUT -->
-                <form method="POST" action="/logout">
-                    <button class="logout_button">Logout</button>
-                </form>
-
-            {% else %}
-                <!-- Button SIGN IN -->
-                <form method="POST" action="/open_sign_in">
-                    <button class="sign_in_button">Sign in</button>
-                </form>
-            {% endif %}
+            <!-- Button LOGOUT -->
+            <form method="POST" action="/logout">
+                <button class="logout_button">Logout</button>
+            </form>
         </div>
     </div>
 
@@ -50,14 +47,15 @@
         </div>
 
         <!-- Button EDIT -->
-        <form class="right_buttons" method="POST" action="/open_edit?title={{ title }}&text={{ text }}">
-            {% if logged_in %}
-                <button class=" sign_in_button">Edit</button>
-            {% endif %}
+        {% if is_admin %}
+            <form class="right_buttons" method="POST" action="/open_edit?title={{ title }}&text={{ text }}">
+            <button class=" sign_in_button">Edit</button>
+        {% endif %}
+
         </form>
     </div>
 
-
+    <!-- Div TEXT -->
     <div class="block">
         <div class="block_padding text">
             {{ text }}

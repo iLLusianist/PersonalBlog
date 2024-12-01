@@ -19,10 +19,15 @@
             <button class="blog_button_move">Blogs</button>
         </form>
 
-        {% if logged_in %}
+        {% if is_admin %}
             <!-- Button ADD -->
             <form method="POST" action="/open_add">
                 <button>Add</button>
+            </form>
+
+            <!-- Button ADMIN -->
+            <form method="POST" action="/open_admin">
+                <button>Admin</button>
             </form>
         {% endif %}
 
@@ -42,10 +47,11 @@
     </div>
 
 
+    <!-- Div BLOGS -->
     <div class="block">
         <ul>
             {% for blog in blogs_list %}
-                {% set title, text = blog %}
+                {% set title, text, created_at, updated_at = blog %}
                 <li>
                     <h3><a class="blog_href" href="/open_blog?title={{ title }}&text={{ text }}">{{ title }}</a></h3>
                     <p>{{ text[:40] }}{% if text|length > 40 %}...{% endif %}</p>

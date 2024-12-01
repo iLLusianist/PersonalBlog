@@ -2,7 +2,7 @@ import sqlite3
 import db
 
 from flask import Flask, render_template, request, redirect, url_for, session
-
+from werkzeug.security import generate_password_hash, check_password_hash
 from db import blogs_table, test_blogs_table
 from flask_session import Session
 
@@ -14,25 +14,39 @@ app.config["SESSION_TYPE"] = "filesystem"
 Session(app)
 
 DATABASE_NAME = 'login_password.db'
-PASSWORD_TABLE  = 'passwords'
-TEST_PASSWORD_TABLE = 'test_passwords'
+USERS_TABLE  = 'users'
+TEST_USERS_TABLE = 'test_users'
 BLOGS_TABLE = 'blogs'
 TEST_BLOGS_TABLE = 'test_blogs'
+USER_STATUS = {
+    'user': 'User',
+    'admin': 'Admin'
+}
 
 
 # Redirect functions
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    db.check_table(DATABASE_NAME, BLOGS_TABLE)
     blogs_list = get_all_from_table(DATABASE_NAME, BLOGS_TABLE)
+
     logged_in = session.get('logged_in', False)
-    return render_template('index.html', logged_in=logged_in, blogs_list=blogs_list)
+    check_status(session.get('login'))
+    is_admin = session.get('is_admin', False)
+
+    return render_template('index.html', logged_in=logged_in, is_admin=is_admin, blogs_list=blogs_list)
 
 @app.route('/open_blog', methods=['GET', 'POST'])
 def open_blog():
     title = request.args.get('title')
     text = request.args.get('text')
     logged_in = session.get('logged_in', False)
-    return render_template('blog.html', logged_in=logged_in, title=title, text=text)
+    check_status(session.get('login'))
+    is_admin = session.get('is_admin', False)
+    if logged_in:
+        return render_template('blog.html', logged_in=logged_in, is_admin=is_admin, title=title, text=text)
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/open_sign_in', methods=['GET', 'POST'])
 def open_sign_in():
@@ -40,7 +54,7 @@ def open_sign_in():
     if not logged_in:
         return render_template('sign_in.html')
     else:
-        return render_template('index.html', logged_in=logged_in)
+        return redirect(url_for('index'))
 
 @app.route('/open_sign_up', methods=['GET', 'POST'])
 def open_sign_up():
@@ -48,30 +62,41 @@ def open_sign_up():
     if not logged_in:
         return render_template('sign_up.html')
     else:
-        return render_template('index.html', logged_in=logged_in)
+        return redirect(url_for('index'))
 
 @app.route('/open_add', methods=['GET', 'POST'])
 def open_add():
-    logged_in = session.get('logged_in', False)
-    if not logged_in:
-        return render_template('index.html', logged_in=logged_in)
-    else:
+    check_status(session.get('login'))
+    is_admin = session.get('is_admin', False)
+    if is_admin:
         return render_template('add.html')
+    else:
+        return redirect(url_for('index'))
 
 @app.route('/open_edit', methods=['GET', 'POST'])
 def open_edit():
     title = request.args.get('title')
     text = request.args.get('text')
-    logged_in = session.get('logged_in', False)
-    if not logged_in:
-        return render_template('index.html', logged_in=logged_in)
-    else:
+    check_status(session.get('login'))
+    is_admin = session.get('is_admin', False)
+    if is_admin:
         return render_template('edit.html', title=title, text=text)
+    else:
+        return redirect(url_for('index'))
+
+@app.route('/open_admin', methods=['GET', 'POST'])
+def open_admin():
+    check_status(session.get('login'))
+    is_admin = session.get('is_admin', False)
+    if is_admin:
+        return render_template('admin.html', user_status=USER_STATUS)
+    else:
+        return redirect(url_for('index'))
 
 
 # POST functions
 @app.route('/registration', methods=['GET', 'POST'])
-def form_registration():
+def registration():
     if request.method == 'POST':
         # Получение вводных данных из формы
         login = request.form.get('sign_up_login')
@@ -84,33 +109,38 @@ def form_registration():
             return '<script>alert("Passwords do not match")</script>' + render_template('sign_up.html')
 
         # Выбор нужной таблицы (тестовой или обычной)
-        table = get_table(DATABASE_NAME, PASSWORD_TABLE, TEST_PASSWORD_TABLE, request.form.get('is_test'))
+        table = get_table(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE, request.form.get('is_test'))
         # Поиск в выбранной таблице
-        result = search_first_in_table(DATABASE_NAME, table, 'login', '', login, '')
-        # Очистка тестовой таблицы
-        if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
+        result = search_first_in_table(DATABASE_NAME, table,{'login': login})
 
         # Если в таблице найден / не найден нужный элемент
         if result is not None:
+            # Очистка тестовой таблицы
+            if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
+
             print(f'Username "{login}" already taken')
             return f'<script>alert("Username {login} already taken")</script>' + render_template('sign_up.html')
         else:
-            add_to_table(DATABASE_NAME, table, login, password)
+            hashed_password = generate_password_hash(password)
+            add_to_table(DATABASE_NAME, table, login, hashed_password, USER_STATUS['user'])
 
-            print(f'User "{login}" added successfully')
+            # Очистка тестовой таблицы
+            if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
+
+            print(f'User "{login}" added successfully with status "{USER_STATUS["user"]}"')
             return redirect(url_for('open_sign_in'))
 
 @app.route('/authorization', methods=['GET', 'POST'])
-def form_authorization():
+def authorization():
     if request.method == 'POST':
         # Получение вводных данных из формы
         login = request.form.get('sign_in_login')
         password = request.form.get('sign_in_password')
 
         # Выбор нужной таблицы (тестовой или обычной)
-        table = get_table(DATABASE_NAME, PASSWORD_TABLE, TEST_PASSWORD_TABLE, request.form.get('is_test'))
+        table = get_table(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE, request.form.get('is_test'))
         # Поиск в выбранной таблице
-        result = search_first_in_table(DATABASE_NAME, table, 'login', '', login, '')
+        result = search_first_in_table(DATABASE_NAME, table, {'login': login})
         # Очистка тестовой таблицы
         if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
 
@@ -120,19 +150,21 @@ def form_authorization():
             return f'<script>alert("Username {login} not found")</script>' + render_template('sign_in.html')
         else:
             # Если введенный пароль совпадает / не совпадает с паролем из БД
-            if str(password) != str(result[1]):
+            if not check_password_hash(str(result[1]), password):
                 print('Passwords do not match')
                 return '<script>alert("Passwords do not match")</script>' + render_template('sign_in.html')
             else:
                 session['logged_in'] = True
+                session['login'] = login
 
-                print('Logged')
+                print(f'"{login}" logged')
                 return redirect(url_for('index'))
 
 @app.route('/logout', methods=['GET', 'POST'])
 def logout():
     if request.method == 'POST':
         session['logged_in'] = False
+        session['login'] = None
         return redirect(url_for('index'))
 
 @app.route('/write_blog', methods=['GET', 'POST'])
@@ -150,7 +182,7 @@ def write_blog():
             # Выбор нужной таблицы (тестовой или обычной)
             table = get_table(DATABASE_NAME, BLOGS_TABLE, TEST_BLOGS_TABLE, request.form.get('is_test'))
             # Поиск в выбранной таблице
-            result = search_first_in_table(DATABASE_NAME, table, 'title', '', title_text, '')
+            result = search_first_in_table(DATABASE_NAME, table, {'title': title_text})
             # Очистка тестовой таблицы
             if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
 
@@ -160,7 +192,7 @@ def write_blog():
                 return f'<script>alert("Blog with title {title_text} already exists")</script>' + render_template(
                     'add.html', title=title_text, text=blog_text)
             else:
-                add_to_table(DATABASE_NAME, table, title_text, blog_text)
+                add_to_table(DATABASE_NAME, table, title_text, blog_text, '', '')
 
                 print(f'Blog with title "{title_text}" successfully added to table "{table}"')
                 return redirect(url_for('index'))
@@ -169,32 +201,71 @@ def write_blog():
 def edit_blog():
     if request.method == 'POST':
         # Получение вводных данных из формы
-        logged_in = session.get('logged_in', False)
-        title_text = request.form.get('edit_title')
-        blog_text = request.form.get('edit_text')
+        new_title = request.form.get('edit_title')
+        new_text = request.form.get('edit_text')
         previous_title = request.args.get('title')
 
-        print(f'Previous_title: {previous_title}')
-        print(f'is logged = {logged_in}')
+        # Выбор нужной таблицы (тестовой или обычной)
+        table = get_table(DATABASE_NAME, blogs_table, test_blogs_table, request.form.get('is_test'))
 
-        if logged_in:
-            # Выбор нужной таблицы (тестовой или обычной)
-            table = get_table(DATABASE_NAME, blogs_table,test_blogs_table, request.form.get('is_test'))
+        # Если заголовок изменен
+        if previous_title != new_title:
             # Поиск в выбранной таблице
-            result = search_first_in_table(DATABASE_NAME, table, 'title', '', title_text, '')
-            # Очистка тестовой таблицы
-            if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
-
-            print(f'result: "{result}"')
+            result = search_first_in_table(DATABASE_NAME, table, {'title': new_title})
 
             if result is not None:
-                print(f'Blog with title "{title_text}" already exists')
-                return f'<script>alert("Blog with title {title_text} already exists")</script>' + render_template(
-                    'edit.html', title=previous_title, text=blog_text)
-            else:
-                update_row(DATABASE_NAME, table, 'title', title_text, previous_title)
+                # Очистка тестовой таблицы
+                if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
 
-                print(f'Blog with title "{title_text}" successfully updated in table "{table}"')
+                print(f'Blog with title "{new_title}" already exists')
+                return f'<script>alert("Blog with title {new_title} already exists")</script>' + render_template(
+                    'edit.html', title=previous_title, text=new_text)
+            else:
+                # Обновление столбцов 'title' и 'text'
+                update_row(DATABASE_NAME, table, ['title', new_title, 'title', previous_title])
+                update_row(DATABASE_NAME, table, ['text', new_text, 'title', new_title])
+        else:
+            # Обновление столбца 'text'
+            update_row(DATABASE_NAME, table, ['text', new_text, 'title', previous_title])
+
+        # Очистка тестовой таблицы
+        if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
+
+        print(f'Blog with title "{new_title}" successfully updated in table "{table}"')
+        return redirect(url_for('index'))
+
+@app.route('/make_admin', methods=['GET', 'POST'])
+def make_admin():
+    if request.method == 'POST':
+        # Получение вводных данных из формы
+        user = request.form.get('admin_input')
+        status = request.form.get('user_status')
+
+        if len(user) < 1:
+            print('User is empty')
+            return f'<script>alert("User is empty")</script>' + render_template('admin.html', user_status=USER_STATUS)
+        else:
+            # Выбор нужной таблицы (тестовой или обычной)
+            table = get_table(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE, request.form.get('is_test'))
+            # Поиск в выбранной таблице
+            result = search_first_in_table(DATABASE_NAME, table, {'login': user})
+
+            if result is None:
+                # Очистка тестовой таблицы
+                if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
+
+                print(f'User "{user}" not found')
+                return f'<script>alert("User {user} not found")</script>' + render_template('admin.html', user_status=USER_STATUS)
+            else:
+                result_list = list(result)
+
+                if result_list[2] != USER_STATUS.get(status):
+                    update_row(DATABASE_NAME, USERS_TABLE, ['status', USER_STATUS.get(status), 'login', user])
+                    print(f'Status "{list(result)[2]}" for user "{user}" updated to "{status}"')
+                else:
+                    print(f'User "{user}" already have status "{status}"')
+                    return f'<script>alert("User {user} already have status {status}")</script>' + render_template('admin.html',
+                                                                                                user_status=USER_STATUS)
                 return redirect(url_for('index'))
 
 
@@ -216,41 +287,64 @@ def get_all_from_table(database, table):
             cursor_db.execute(f'SELECT * FROM {table}')
             return cursor_db.fetchall()
     except Exception as e:
-        print(f'"get_all_blogs" error: "{e}"')
+        print(f'"get_all_from_table" error: "{e}"')
 
-def add_to_table(database, table, first_column_value, second_column_value):
+def add_to_table(database, table, *values):
     try:
         with sqlite3.connect(database) as connected_db:
-            sql_insert = f'INSERT INTO {table} VALUES (?, ?)'
+            placeholder = ', '.join('?' for _ in values)
+            sql_insert = f'INSERT INTO {table} VALUES ({placeholder})'
             cursor_db = connected_db.cursor()
-            cursor_db.execute(sql_insert, (first_column_value, second_column_value))
+            cursor_db.execute(sql_insert, values)
             connected_db.commit()
     except Exception as e:
         print(f'"att_to_table" error: "{e}"')
 
-def search_first_in_table(database, table, first_column, second_column, first_column_value, second_column_value):
+def search_first_in_table(database, table, conditions):
     try:
         with sqlite3.connect(database) as connected_db:
             cursor_db = connected_db.cursor()
-            check_query = f'SELECT * FROM {table} WHERE LOWER({first_column}) = ?'
-            cursor_db.execute(check_query, (first_column_value.lower(),))
+
+            where_clauses = []
+            params = []
+
+            for column, value in conditions.items():
+                where_clauses.append(f'LOWER({column}) = ?')
+                params.append(value.lower())
+
+            check_query = query = f'SELECT * FROM {table} WHERE {" AND ".join(where_clauses)}'
+            cursor_db.execute(check_query, params)
             return cursor_db.fetchone()
     except Exception as e:
         print(f'"search_first_in_table" error: "{e}"')
 
-def update_row(database, table, column, column_value, column_condition):
+def update_row(database, table, to_update):
+    '''
+    :param database: Database to update
+    :param table: Table to update
+    :param to_update: Updated column, New value, Conditional column, Conditional value
+    :return:
+    '''
+
     try:
         with sqlite3.connect(database) as connected_db:
             cursor_db = connected_db.cursor()
-            update_query = f'UPDATE {table} SET {column} = ? WHERE {column} = ?'
-            cursor_db.execute(update_query,(column_value, column_condition))
+            update_query = f'UPDATE {table} SET {to_update[0]} = ? WHERE {to_update[2]} = ?'
+            cursor_db.execute(update_query,(to_update[1], to_update[3]))
             connected_db.commit()
     except Exception as e:
         print(f'"update_row" error: "{e}"')
 
+def check_status(login):
+    table = get_table(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE, None)
+    result = search_first_in_table(DATABASE_NAME, table, {'login': login, 'status': USER_STATUS['admin']})
+    if result is None:
+        session['is_admin'] = False
+    else:
+        session['is_admin'] = True
 
 # Start APP
 if __name__ == '__main__':
-    db.run(DATABASE_NAME, PASSWORD_TABLE, TEST_PASSWORD_TABLE)
+    db.run(DATABASE_NAME, USERS_TABLE, TEST_USERS_TABLE)
     app.run(debug=True)
 
