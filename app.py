@@ -30,9 +30,15 @@ def index():
     db.check_table(DATABASE_NAME, BLOGS_TABLE)
     blogs_list = get_all_from_table(DATABASE_NAME, BLOGS_TABLE)
 
-    logged_in = session.get('logged_in', False)
-    check_status(session.get('login'))
-    is_admin = session.get('is_admin', False)
+    login = session.get('login')
+
+    if login is not None:
+        logged_in = session.get('logged_in', False)
+        check_status(session.get('login'))
+        is_admin = session.get('is_admin', False)
+    else:
+        logged_in = False
+        is_admin = False
 
     return render_template('index.html', logged_in=logged_in, is_admin=is_admin, blogs_list=blogs_list)
 
@@ -177,7 +183,8 @@ def write_blog():
         # Если одно из полей пустое
         if len(title_text)<1 or len(blog_text)<1:
             print(f'Title or text is empty')
-            return f'<script>alert("Title or text is empty")</script>' + render_template('add.html', title=title_text, text=blog_text)
+            return f'<script>alert("Title or text is empty")</script>' + render_template('add.html', title=title_text,
+                                                                                         text=blog_text)
         else:
             # Выбор нужной таблицы (тестовой или обычной)
             table = get_table(DATABASE_NAME, BLOGS_TABLE, TEST_BLOGS_TABLE, request.form.get('is_test'))
@@ -255,7 +262,8 @@ def make_admin():
                 if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)
 
                 print(f'User "{user}" not found')
-                return f'<script>alert("User {user} not found")</script>' + render_template('admin.html', user_status=USER_STATUS)
+                return f'<script>alert("User {user} not found")</script>' + render_template('admin.html',
+                                                                                            user_status=USER_STATUS)
             else:
                 result_list = list(result)
 
@@ -264,8 +272,8 @@ def make_admin():
                     print(f'Status "{list(result)[2]}" for user "{user}" updated to "{status}"')
                 else:
                     print(f'User "{user}" already have status "{status}"')
-                    return f'<script>alert("User {user} already have status {status}")</script>' + render_template('admin.html',
-                                                                                                user_status=USER_STATUS)
+                    return (f'<script>alert("User {user} already have status {status}")</script>' +
+                            render_template('admin.html', user_status=USER_STATUS))
                 return redirect(url_for('index'))
 
 
@@ -342,6 +350,7 @@ def check_status(login):
         session['is_admin'] = False
     else:
         session['is_admin'] = True
+
 
 # Start APP
 if __name__ == '__main__':
