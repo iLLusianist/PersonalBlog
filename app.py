@@ -4,6 +4,7 @@ import db
 from flask import Flask, render_template, request, redirect, url_for, session
 from werkzeug.security import generate_password_hash, check_password_hash
 from flask_session import Session
+from datetime import datetime
 
 
 app = Flask(__name__, static_folder='static')
@@ -198,7 +199,7 @@ def write_blog():
                 return f'<script>alert("Blog with title {title_text} already exists")</script>' + render_template(
                     'add.html', title=title_text, text=blog_text)
             else:
-                add_to_table(DATABASE_NAME, table, title_text, blog_text, '', '')
+                add_to_table(DATABASE_NAME, table, title_text, blog_text, datetime.now().strftime('%d-%m-%Y %H:%M'), '')
 
                 print(f'Blog with title "{title_text}" successfully added to table "{table}"')
                 return redirect(url_for('index'))
@@ -230,9 +231,13 @@ def edit_blog():
                 # Обновление столбцов 'title' и 'text'
                 update_row(DATABASE_NAME, table, ['title', new_title, 'title', previous_title])
                 update_row(DATABASE_NAME, table, ['text', new_text, 'title', new_title])
+                update_row(DATABASE_NAME, table,
+                           ['updated_at', datetime.now().strftime('%d-%m-%Y %H:%M'), 'title', new_title])
         else:
             # Обновление столбца 'text'
             update_row(DATABASE_NAME, table, ['text', new_text, 'title', previous_title])
+            update_row(DATABASE_NAME, table,
+                       ['updated_at', datetime.now().strftime('%d-%m-%Y %H:%M'), 'title', previous_title])
 
         # Очистка тестовой таблицы
         if request.form.get('test_ended'): db.blank_table(DATABASE_NAME, table)

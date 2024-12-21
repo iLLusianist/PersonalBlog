@@ -54,7 +54,11 @@
                 {% set title, text, created_at, updated_at = blog %}
                 <li>
                     <h3><a class="blog_href" href="/open_blog?title={{ title }}&text={{ text }}">{{ title }}</a></h3>
-                    <p>{{ text[:40] }}{% if text|length > 40 %}...{% endif %}</p>
+                    {% set date = created_at %}
+                    {% if updated_at != '' %}
+                        {% set date = updated_at %}
+                    {% endif %}
+                    <p class="blog_text" data-date="{{ date }}">{{ text[:40] }}{% if text|length > 40 %}...{% endif %}</p>
                 </li>
             {% endfor %}
         </ul>

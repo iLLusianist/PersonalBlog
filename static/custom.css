@@ -21,6 +21,7 @@ button:hover {
 ul {
     list-style-type: none;
     margin-left: -30px;
+    width: 100%;
 }
 h3 {
     margin: 0;
@@ -29,6 +30,18 @@ p {
     margin-top: 0;
     margin-bottom: 10px;
 }
+.blog_text {
+    margin-top: 0;
+    margin-bottom: 10px;
+}
+
+.blog_text::after{
+    content: "Updated: " attr(data-date);
+    color: #666;
+    margin-left: 30px;
+}
+
+
 form {
     margin-block-end: 0;
 }
@@ -55,7 +68,7 @@ form {
 .main_title_text {
     font-size: 48px;
     padding-left: 25px;
-    width: 550px;
+    width: 310px;
 }
 .blog_button_move {
      padding-left: 10px
@@ -63,6 +76,7 @@ form {
 .block_padding {
     padding: 10px;
 }
+
 
 .right_buttons {
     display: flex;
